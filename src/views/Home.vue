@@ -1,122 +1,120 @@
 <template>
-  <v-card>
-    <v-card-title>
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search"
-        single-line
-        hide-details
-      ></v-text-field>
-    </v-card-title>
-    <v-data-table
-      :headers="headers"
-      :items="desserts"
-      :search="search"
-    ></v-data-table>
-  </v-card>
+  <div>
+    <v-card>
+      <v-card-title>
+        <template>
+          <v-container>
+            <v-row>
+              All About Customer
+            </v-row>
+          </v-container>
+        </template>
+      </v-card-title>
+      <template>
+        <v-container>
+          <v-form ref="form" v-model="valid" lazy-validation>
+            <v-text-field
+              v-model="ban"
+              :rules="banRules"
+              label="BAN"
+              required
+            ></v-text-field>
+
+            <v-text-field
+              v-model="product_id"
+              label="Product Id"
+              required
+            ></v-text-field>
+
+            <v-text-field
+              v-model="order_id"
+              label="Order Id"
+              required
+            ></v-text-field>
+
+            <v-btn
+              :disabled="!valid"
+              color="success"
+              class="mr-4"
+              @click="submit"
+            >
+              Submit
+            </v-btn>
+
+            <v-btn color="warning" @click="reset">
+              Reset
+            </v-btn>
+          </v-form>
+        </v-container>
+      </template>
+    </v-card>
+  </div>
 </template>
 <script>
-  export default {
-    data () {
-      return {
-        search: '',
-        headers: [
-          {
-            text: 'Dessert (100g serving)',
-            align: 'start',
-            filterable: false,
-            value: 'name',
-          },
-          { text: 'Calories', value: 'calories' },
-          { text: 'Fat (g)', value: 'fat' },
-          { text: 'Carbs (g)', value: 'carbs' },
-          { text: 'Protein (g)', value: 'protein' },
-          { text: 'Iron (%)', value: 'iron' },
-        ],
-        desserts: [
-          {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-            iron: '1%',
-          },
-          {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-            iron: '1%',
-          },
-          {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
-            iron: '7%',
-          },
-          {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
-            iron: '8%',
-          },
-          {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
-            iron: '16%',
-          },
-          {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
-            iron: '0%',
-          },
-          {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
-            iron: '2%',
-          },
-          {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
-            iron: '45%',
-          },
-          {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
-            iron: '22%',
-          },
-          {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
-            iron: '6%',
-          },
-        ],
+import axios from "axios";
+import { mapActions } from "vuex";
+export default {
+  data: () => ({
+    valid: true,
+    ban: "",
+    banRules: [
+      v => !!v || "This is required",
+      v => !/\D/.test(v) || "BAN must be a number"
+    ],
+    product_id: "",
+    order_id: "",
+    responseData: null
+  }),
+  methods: {
+    ...mapActions(["showLoader", "hideLoader", "setOrderData"]),
+    submit() {
+      if (this.$refs.form.validate()) {
+        this.showLoader({
+          isLoading: true,
+          loaderType: "spinner"
+        });
+        let data = {};
+        data.ban = this.ban;
+        if (this.product_id) {
+          data.product_id = this.product_id;
+        }
+        if (this.order_id) {
+          data.order_id = this.order_id;
+        }
+        axios
+          .post(process.env.VUE_APP_API + "/customer", data)
+          .then(r => {
+            if (r.data.status_code == 404) {
+              this.$snotify.error(r.data.data, {
+                timeout: 2000,
+                showProgressBar: true,
+                closeOnClick: false,
+                pauseOnHover: true,
+                position: "rightTop"
+              });
+            } else {
+              this.setOrderData(r.data.data.orders);
+              this.$router.push("/search");
+            }
+            console.log(r.data.data);
+            this.hideLoader();
+          })
+          .catch(error => {
+            console.log("Error - ", error);
+            this.hideLoader();
+            this.$snotify.error(error, {
+              timeout: 2000,
+              showProgressBar: true,
+              closeOnClick: false,
+              pauseOnHover: true,
+              position: "rightTop"
+            });
+          });
       }
     },
+    reset() {
+      this.$refs.form.reset();
+    }
   }
+};
 </script>

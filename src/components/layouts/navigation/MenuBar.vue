@@ -51,6 +51,6 @@ export default {
   data: () => ({
     loginUserName: "Allen Jack",
     menu: false
-  }),
+  })
 };
 </script>

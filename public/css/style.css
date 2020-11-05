@@ -11,3 +11,11 @@
     color: #1564c0 !important;
     text-decoration: underline !important;
 }
+.title {
+    text-decoration: none;
+    color: white;
+}
+.searchCard {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}

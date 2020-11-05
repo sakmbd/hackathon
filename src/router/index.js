@@ -8,6 +8,8 @@ import store from "../store";
 
 import PageNotFound from "../views/errors/PageNotFound.vue";
 import Home from "../views/Home.vue";
+import CustomerList from "../views/Lists.vue";
+import Search from "../views/Search.vue";
 
 Vue.use(VueRouter);
 
@@ -17,6 +19,16 @@ const routes = [
     path: "/",
     name: "home",
     component: Home
+  },
+  {
+    path: "/list",
+    name: "list",
+    component: CustomerList
+  },
+  {
+    path: "/search",
+    name: "search",
+    component: Search
   },
   {
     path: "*",

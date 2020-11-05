@@ -16,23 +16,22 @@
 </template>
 
 <script>
-
 export default {
   data: () => ({
     items: {}
   }),
   mounted() {
     let itemArray = [
-      {
-        icon: "mdi-contacts",
-        text: "Clients",
-        to: "/clients",
-        isShow: 1 //userData.is_super
-      },
+      // {
+      //   icon: "mdi-contacts",
+      //   text: "Clients",
+      //   to: "/clients",
+      //   isShow: 1 //userData.is_super
+      // },
       {
         icon: "mdi-account-multiple",
-        text: "Users",
-        to: "/users",
+        text: "List",
+        to: "/list",
         isShow: 1
       }
     ];

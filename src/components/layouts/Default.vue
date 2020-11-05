@@ -19,14 +19,14 @@
         <!-- <v-img src="@/assets/images/logo.svg" :width="100"></v-img> -->
         Hackathon
       </v-toolbar-title>
-      <v-text-field
+      <!-- <v-text-field
         flat
         solo-inverted
         hide-details
         prepend-inner-icon="mdi-magnify"
         label="Search"
         class="hidden-sm-and-down"
-      />
+      /> -->
       <v-spacer />
 
       <v-btn icon>
